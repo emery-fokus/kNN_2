@@ -4,7 +4,7 @@ from sklearn.preprocessing import StandardScaler
 
 def load_data(file_path, target_col="target"):
 	if ".csv" in file_path:
-		df = pandas.read_csv(file_path)
+		df = pandas.read_csv(file_path,sep=";")
 
 	elif ".xlsx" in file_path:
 		df = pandas.read_excel(file_path)

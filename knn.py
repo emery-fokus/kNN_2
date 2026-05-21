@@ -1,59 +1,49 @@
-class KNN:
+class knn:
     def __init__(self, k):
         self.k = k
-        self.X_train = None
-        self.y_train = None
+        self.x = None
+        self.y = None
 
-    def fit(self, X, Y):
-        """Mémorisation des données d'entraînement"""
-        self.X_train = X
-        self.y_train = Y
+    def fit(self, x_train, y_train):
+        self.x_train = x_train
+        self.y_train = y_train
 
-    def distance(self, a, b):
-        """Calcul de la distance euclidienne """
-        total = 0
-        for i in range(len(a)):
-            total += (a[i] - b[i]) ** 2
-        return total ** 0.5
-
-    def _predict_one(self, x):
-        """Prédiction pour UN SEUL échantillon"""
+    def predict_one_point(self, x_test_point):
         distances = []
-        for i in range(len(self.X_train)):
-            dist = self.distance(x, self.X_train[i])
-            distances.append((dist, self.y_train[i]))
-
-        distances.sort(key=lambda x: x[0])
-        k_voisins = distances[:self.k]
+        for index in range(len(self.x_train)):
+            x_train = self.x_train[index]
+            sommes_carre = 0
+            for index_j in range(len(x_test_point)):
+                sommes_carre += (x_test_point[index_j] - x_train[index_j]) ** 2
+            distance = sommes_carre ** 0.5
+            distances.append((distance, self.y_train[index]))
         
-        # Vote majoritaire
-        votes = {}
-        for dist, label in k_voisins:
-            if label not in votes:
-                votes[label] = 1
+        distances.sort(key=lambda couple: couple[0])
+        neighbors = distances[:self.k]
+      
+        compteur_vote = {}
+        for neighbor in neighbors:
+            label = neighbor[1]
+            if label not in compteur_vote:
+                compteur_vote[label] = 1
             else:
-                votes[label] += 1
+                compteur_vote[label] += 1
                 
-        label_pred = max(votes, key=votes.get)
-        return label_pred
-
-    def predict(self, X):
-        """Prédiction pour une LISTE d'échantillons"""
-        predictions = []
-        for x in X:
-            predictions.append(self._predict_one(x))
-        return predictions
-
-
+        compteur_vote_gagnant = max(compteur_vote, key=compteur_vote.get)
+        return compteur_vote_gagnant
    
-
-
-
-if __name__ == "__main__":
-    model = KNN(k=3)
-    X = [[0], [1], [2], [3]]
-    Y = [0, 0, 1, 1]
-    model.fit(X, Y)
-    print("Test unitaire [2]  :", model._predict_one([2]))   
-    print("Test unitaire [11] :", model._predict_one([11]))  
-    print("Test liste globale :", model.predict([[0], [3]])) 
+    def predict(self, x_test):
+        y_pred = []
+        for x_test_point in x_test:
+            y_pred.append(self.predict_one_point(x_test_point))
+        return y_pred
+   
+    def evaluate(self, x_test, y_test):
+        y_pred = self.predict(x_test)
+        compteur = 0
+        for index in range(len(y_pred)):
+            if y_pred[index] == y_test[index]:
+                compteur += 1
+    
+        precision = compteur / len(y_test)
+        return precision
