@@ -38,12 +38,12 @@ class knn:
             y_pred.append(self.predict_one_point(x_test_point))
         return y_pred
    
-    def evaluate(self, x_test, y_test):
-        y_pred = self.predict(x_test)
-        compteur = 0
-        for index in range(len(y_pred)):
-            if y_pred[index] == y_test[index]:
-                compteur += 1
+    # def evaluate(self, x_test, y_test):
+    #     y_pred = self.predict(x_test)
+    #     compteur = 0
+    #     for index in range(len(y_pred)):
+    #         if y_pred[index] == y_test[index]:
+    #             compteur += 1
     
-        precision = compteur / len(y_test)
-        return precision
+    #     precision = compteur / len(y_test)
+    #     return precision
